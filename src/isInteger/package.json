@@ -1,0 +1,21 @@
+{
+  "name": "fourdollar.isinteger",
+  "version": "1.0.4",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "author": {
+    "name": "bynaki",
+    "email": "bynaki@icloud.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bynaki/fourdollar.git"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "keywords": [
+    "node", "front-end", "library"
+  ],
+  "license": "MIT"
+}

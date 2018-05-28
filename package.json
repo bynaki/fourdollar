@@ -1,0 +1,56 @@
+{
+  "name": "fourdollar",
+  "version": "1.2.0",
+  "description": "Private Modlue",
+  "main": "dist/fourdollar.js",
+  "types": "dist/fourdollar.d.ts",
+  "author": {
+    "name": "bynaki",
+    "email": "bynaki@icloud.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bynaki/fourdollar.git"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "keywords": [
+    "node",
+    "front-end",
+    "library"
+  ],
+  "license": "MIT",
+  "config": {
+    "srcMain": "src/index.ts"
+  },
+  "scripts": {
+    "name": "echo $npm_package_name",
+    "build.tsc": "tsc && bin/copy \"src/**/!(*.ts)\" \"dist\" \"**/node_modules/**\"",
+    "clean": "rimraf dist",
+    "build.util": "tsc --outDir utils utils/index.ts",
+    "build.test": "tsc -p tsconfig.test.json && bin/copy \"src/**/!(*.ts)\" \"dist.test/src\" \"**/node_modules/**\"",
+    "test": "npm run build.test && ava -v",
+    "test.watch": "npm run build.test && ava --watch",
+    "clean.test": "rimraf dist.test"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.2",
+    "@types/node": "^9.6.18",
+    "ava": "^0.25.0",
+    "fourdollar.promisify": "^1.0.5",
+    "glob": "^7.1.2",
+    "stop.js": "^0.2.3",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "fecha": "^2.3.2",
+    "fs-extra": "^5.0.0",
+    "rotating-file-stream": "^1.3.4"
+  },
+  "ava": {
+    "files": [
+      "dist.test/test/**/*.spec.js"
+    ]
+  }
+}
