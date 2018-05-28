@@ -1,7 +1,7 @@
 {
   "name": "fourdollar",
   "version": "1.2.0",
-  "description": "Private Modlue",
+  "description": "Private Utility Module",
   "main": "dist/fourdollar.js",
   "types": "dist/fourdollar.d.ts",
   "author": {
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.2",
-    "@types/node": "^9.6.18",
+    "@types/node": "^10.1.3",
     "ava": "^0.25.0",
     "fourdollar.promisify": "^1.0.5",
     "glob": "^7.1.2",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "fecha": "^2.3.2",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.1",
     "rotating-file-stream": "^1.3.4"
   },
   "ava": {

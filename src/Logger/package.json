@@ -21,6 +21,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "fecha": "^2.3.2"
+    "fecha": "^2.3.3"
   }
 }
