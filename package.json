@@ -1,6 +1,6 @@
 {
   "name": "fourdollar",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Private Utility Module",
   "main": "dist/fourdollar.js",
   "types": "dist/fourdollar.d.ts",
