@@ -159,3 +159,16 @@ test('Timer > Timer#once() > once()와 iterate()가 벌갈아 실행된다.', as
   t.is(Math.floor((eTime - sTime) / 100), 4)
   timer.stop()
 })
+
+test.only('Timer > Timer#pause()', async t => {
+  const timer = new Timer(100, 100)
+  const aTime = await timer.once(async () => {
+    const time = new Date().getTime()
+    await timer.pause(200)
+    return time
+  })
+  console.log(aTime)
+  const bTime = await timer.once(async () => new Date().getTime())
+  console.log(bTime)
+  t.is(Math.floor((bTime - aTime) / 100), 3)
+})

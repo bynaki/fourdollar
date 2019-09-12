@@ -7,7 +7,7 @@ callback과 callback 사이에 최소 시간간격을 설정할 수 있다.
 ## Install
 
 ```bash
-$ yarn add fourdollar.timer
+yarn add fourdollar.timer
 ```
 
 

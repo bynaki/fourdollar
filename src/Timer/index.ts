@@ -86,6 +86,16 @@ export class Timer {
     }
   }
 
+  pause(ms: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.stop()
+      setTimeout(() => {
+        this.start()
+        resolve()
+      }, ms)
+    })
+  }
+
   get isStarted(): boolean {
     return !!this._t
   }
