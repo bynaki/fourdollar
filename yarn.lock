@@ -1055,10 +1055,6 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-fourdollar.promisify@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/fourdollar.promisify/-/fourdollar.promisify-1.0.5.tgz#c4cf3878ce66c24eb36715ccca372f1584ffeb87"
-
 fs-extra@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-6.0.1.tgz#8abc128f7946e310135ddc93b98bddb410e7a34b"
@@ -2269,10 +2265,6 @@ set-immediate-shim@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/set-immediate-shim/-/set-immediate-shim-1.0.1.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
 
-setimmediate@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
-
 shebang-command@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/shebang-command/-/shebang-command-1.2.0.tgz#44aac65b695b03398968c39f363fee5deafdf1ea"
@@ -2357,12 +2349,6 @@ sprintf-js@~1.0.2:
 stack-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/stack-utils/-/stack-utils-1.0.1.tgz#d4f33ab54e8e38778b0ca5cfd3b3afb12db68620"
-
-stop.js@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/stop.js/-/stop.js-0.2.3.tgz#2900be9cbff66d8418aab17ae4295f23a1eff66b"
-  dependencies:
-    setimmediate "^1.0.5"
 
 string-width@^1.0.1:
   version "1.0.2"

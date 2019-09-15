@@ -6,6 +6,7 @@ import test from 'ava'
 import {
   Logger,
   FileWriter,
+  stop,
 } from '../src/fourdollar'
 import * as $4 from '../src/fourdollar'
 import {
@@ -15,7 +16,8 @@ import {
 import {
   join,
 } from 'path'
-import * as stop from 'stop.js'
+
+
 
 {
   const logger = new Logger('Hello')

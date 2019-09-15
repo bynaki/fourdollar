@@ -160,7 +160,7 @@ test('Timer > Timer#once() > once()와 iterate()가 벌갈아 실행된다.', as
   timer.stop()
 })
 
-test.only('Timer > Timer#pause()', async t => {
+test('Timer > Timer#pause()', async t => {
   const timer = new Timer(100, 100)
   const aTime = await timer.once(async () => {
     const time = new Date().getTime()

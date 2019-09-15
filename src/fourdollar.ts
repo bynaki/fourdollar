@@ -8,6 +8,7 @@ import toStringQuery from './toStringQuery'
 import Logger from './Logger'
 import FileWriter from './FileWriter'
 import Timer from './Timer'
+import stop from './stop'
 
 
 export {
@@ -18,6 +19,7 @@ export {
   Logger,
   FileWriter,
   Timer,
+  stop,
 }
 
 export default {
@@ -28,4 +30,5 @@ export default {
   Logger,
   FileWriter,
   Timer,
+  stop,
 }
