@@ -1,6 +1,6 @@
 {
   "name": "fourdollar.logger",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "main": "index.js",
   "types": "index.d.ts",
   "author": {
@@ -12,7 +12,7 @@
     "url": "https://github.com/bynaki/fourdollar.git"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 15.0.0"
   },
   "keywords": [
     "node",
@@ -21,6 +21,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "fecha": "^2.3.3"
+    "fecha": "^4.2.1"
   }
 }
