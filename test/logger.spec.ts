@@ -69,7 +69,7 @@ import {
   const dir = join(__dirname, 'log')
   const file = 'normal.log'
   
-  test.after.serial(() => remove(dir))
+  test.serial.after(() => remove(dir))
   
   test.serial('Logger > StreamLogger#log(): normal stream', async t => {
     Logger.writer.link = new FileWriter(join(dir, file))

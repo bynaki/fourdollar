@@ -1,4 +1,4 @@
-import * as fecha from 'fecha'
+import fecha from 'fecha'
 
 
 export interface IWriter {
@@ -27,8 +27,7 @@ class DefaultWriter implements IWriter {
   }
 }
 
-
-fecha.masks.myMask = 'YYYY-MM-DD HH:mm:ss.SSS'
+const myMask = 'YYYY-MM-DD HH:mm:ss.SSS'
 let _writer: IWriter = new DefaultWriter()
 let _format: string = ':time: > :name: - :msg:'
 
@@ -53,7 +52,7 @@ export class Logger {
   }
 
   protected _makeMsg(msgs: any[]) {
-    const time = fecha.format(new Date(), 'myMask')
+    const time = fecha.format(new Date(), myMask)
     return _format.replace(':time:', time)
       .replace(':name:', this.name).replace(':msg:', msgs.join(' '))
   }

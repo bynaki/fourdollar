@@ -17,14 +17,14 @@ export interface IWriter {
 }
 
 export class FileWriter implements IWriter {
-  private _stream: WriteStream
+  private _stream: WriteStream|rfs.RotatingFileStream
 
   constructor(path: string, interval?: string) {
     if(interval) {
       let dir = dirname(path)
       let file = basename(path)
       ensureDirSync(dir)
-      this._stream = rfs(file, {
+      this._stream = rfs.createStream(file, {
         interval,
         path: dir,
       })
