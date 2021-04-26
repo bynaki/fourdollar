@@ -150,3 +150,28 @@ import {
     Logger.writer = origin
   })
 }
+
+
+class Hello extends Logger {
+  constructor(public readonly code: string) {
+    super()
+  }
+
+  get name() {
+    return `${this.constructor.name}:${this.code}`
+  }
+}
+
+{
+  const logger = new Hello('World')
+
+  test.serial('Logger > extends', t => {
+    const origin = Logger.writer.log
+    Logger.writer.log = (msg) => {
+      console.log(msg)
+      t.regex(msg, /\d{4}-\d\d-\d\d \d\d:\d\d:\d\d.\d{3} > Hello:World - foobar/)
+    }
+    logger.log('foobar')
+    Logger.writer.log = origin
+  })
+}

@@ -49,7 +49,14 @@ export class Logger {
     _format = format
   }
 
-  constructor(public readonly name: string = '') {
+  private _name: string
+
+  constructor(name: string = '') {
+    this._name = name
+  }
+
+  get name() {
+    return this._name
   }
 
   protected _makeMsg(msgs: any[]) {
