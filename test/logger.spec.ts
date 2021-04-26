@@ -24,27 +24,36 @@ import {
 
   test.serial('Logger > Logger#log()', t => {
     const origin = Logger.writer.log
+    const orginFormat = Logger.format
+    Logger.format = ':name: < :time:\n:msg:'
     Logger.writer.log = (msg) => {
-      const reg = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} > Hello - foo bar/
+      console.log(msg)
+      const reg = /Hello < \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\nfoo\nbar/
       t.regex(msg, reg)
     }
     logger.log('foo', 'bar')
     Logger.writer.log = origin
+    Logger.format = orginFormat
   })
 
   test.serial('Logger > Logger#error()', t => {
     const origin = Logger.writer.error
+    const orginFormat = Logger.format
+    Logger.format = ':name: < :time:\n:msg:'
     Logger.writer.error = (msg) => {
-      const reg = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} > Hello - foo bar/
+      console.log(msg)
+      const reg = /Hello < \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\nfoo\nbar/
       t.regex(msg, reg)
     }
     logger.error('foo', 'bar')
     Logger.writer.error = origin
+    Logger.format = orginFormat
   })
 
   test.serial('Logger > Logger.format: default', t => {
     const origin = Logger.writer.log
     Logger.writer.log = (msg) => {
+      console.log(msg)
       t.regex(msg, /\d{4}-\d\d-\d\d \d\d:\d\d:\d\d.\d{3} > Hello - foobar/)
     }
     logger.log('foobar')
@@ -56,12 +65,34 @@ import {
     const formatOri = Logger.format
     Logger.format = ':time: > [:name:] :msg:'
     Logger.writer.log = (msg) => {
+      console.log(msg)
       t.regex(msg, /\d{4}-\d\d-\d\d \d\d:\d\d:\d\d.\d{3} > \[Hello\] foobar/)
     }
     logger.log('foobar')
     Logger.format = formatOri
     Logger.writer.log = origin
   })
+}
+
+{
+  const logger = new Logger('Log Json')
+  test.serial('Logger > Logger#log(): Log Json', t => {
+    const origin = Logger.writer.log
+    const orginFormat = Logger.format
+    Logger.format = ':name: < :time:\n:msg:'
+    Logger.writer.log = (msg) => {
+      console.log(msg)
+      const reg = /Log Json < \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\n{\n  "foo": "bar",\n  "hello": "world"\n}/
+      t.regex(msg, reg)
+    }
+    logger.log({
+      foo: 'bar',
+      hello: 'world',
+    })
+    Logger.writer.log = origin
+    Logger.format = orginFormat
+  })
+
 }
 
 {

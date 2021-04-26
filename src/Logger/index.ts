@@ -1,4 +1,5 @@
 import fecha from 'fecha'
+import { Console } from 'node:console'
 
 
 export interface IWriter {
@@ -53,8 +54,20 @@ export class Logger {
 
   protected _makeMsg(msgs: any[]) {
     const time = fecha.format(new Date(), myMask)
+    const suitableMsgs = msgs.map(m => {
+      if(typeof(m) === 'string') {
+        return m
+      } else {
+        try {
+          return JSON.stringify(m, null, 2)
+        } catch(err) {
+          return m
+        }
+      }
+    })
     return _format.replace(':time:', time)
-      .replace(':name:', this.name).replace(':msg:', msgs.join(' '))
+      .replace(':name:', this.name)
+      .replace(':msg:', suitableMsgs.join('\n'))
   }
 
   log(...msgs: any[]): void {

@@ -19,7 +19,8 @@ const logger = new Logger('Hello')
 logger.log('hello', 1004)
 logger.error('error!!')
 
-// 2018-01-25 15:23:19.174 > Hello - hello 1004
+// 2018-01-25 15:23:19.174 > Hello - hello
+// 1004
 // 2018-01-25 15:23:19.178 > Hello - error!!
 ```
 
