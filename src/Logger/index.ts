@@ -1,5 +1,4 @@
 import fecha from 'fecha'
-import { Console } from 'node:console'
 
 
 export interface IWriter {
@@ -11,12 +10,16 @@ export interface IWriter {
 class DefaultWriter implements IWriter {
   private _other: IWriter
 
+  private _message(type: string, msg: string): void {
+    console.log(`\n${type}: ` + msg)
+  }
+
   log(msg: string): void {
-    console.log(msg)
+    this._message('log', msg)
   }
 
   error(msg: string): void {
-    console.log(msg)
+    this._message('err', msg)
   }
 
   get link() {
