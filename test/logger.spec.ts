@@ -8,7 +8,6 @@ import {
   FileWriter,
   stop,
 } from '../src/fourdollar'
-import * as $4 from '../src/fourdollar'
 import {
   readFile,
   remove,
@@ -92,7 +91,24 @@ import {
     Logger.writer.log = origin
     Logger.format = orginFormat
   })
+}
 
+{
+  class TestError extends Error {
+    constructor(msg?: string) {
+      super(msg)
+    }
+    
+    get name() {
+      return 'TestError'
+    }
+  }
+  const logger = new Logger('Log Error')
+  test.serial('Logger > Logger#log(): Log Error', t => {
+    const e = new TestError('this is error!!')
+    logger.error(e)
+    t.pass()
+  })
 }
 
 {

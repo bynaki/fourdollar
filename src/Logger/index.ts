@@ -67,6 +67,8 @@ export class Logger {
     const suitableMsgs = msgs.map(m => {
       if(typeof(m) === 'string') {
         return m
+      } else if(m instanceof Error) {
+        return `${m.name}: ${m.message}\n${m.stack}`
       } else {
         try {
           return JSON.stringify(m, null, 2)
