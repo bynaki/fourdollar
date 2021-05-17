@@ -59,7 +59,11 @@ export class Logger {
   }
 
   get name() {
-    return this._name
+    if(this._name !== '') {
+      return this._name
+    } else {
+      return this.constructor.name
+    }
   }
 
   protected _makeMsg(msgs: any[]) {
