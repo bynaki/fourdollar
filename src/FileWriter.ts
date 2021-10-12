@@ -16,9 +16,17 @@ export interface IWriter {
   link?: IWriter
 }
 
+/**
+ * Log를 파일로
+ */
 export class FileWriter implements IWriter {
   private _stream: WriteStream|rfs.RotatingFileStream
 
+  /**
+   * Log를 파일로
+   * @param path 저장할 파일경로
+   * @param interval 장기간 로그할때 파일을 따로 저장. 예: '1d'
+   */
   constructor(path: string, interval?: string) {
     if(interval) {
       let dir = dirname(path)
@@ -49,5 +57,3 @@ export class FileWriter implements IWriter {
     this._message('err', msg)
   }
 }
-
-export default FileWriter

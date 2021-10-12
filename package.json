@@ -1,9 +1,9 @@
 {
   "name": "fourdollar",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Private Utility Module",
-  "main": "dist/fourdollar.js",
-  "types": "dist/fourdollar.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": {
     "name": "bynaki",
     "email": "bynaki@icloud.com"
@@ -13,7 +13,7 @@
     "url": "https://github.com/bynaki/fourdollar.git"
   },
   "engines": {
-    "node": ">= 15.0.0"
+    "node": ">= 16.0.0"
   },
   "keywords": [
     "node",
@@ -35,16 +35,16 @@
     "clean.test": "rimraf dist.test"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.11",
-    "@types/node": "^15.0.2",
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^16.10.3",
     "ava": "^3.15.0",
-    "glob": "^7.1.6",
-    "typescript": "^4.2.4"
+    "glob": "^7.2.0",
+    "typescript": "^4.4.3"
   },
   "dependencies": {
     "fecha": "^4.2.1",
     "fs-extra": "^10.0.0",
-    "rotating-file-stream": "^2.1.5"
+    "rotating-file-stream": "^2.1.6"
   },
   "ava": {
     "files": [

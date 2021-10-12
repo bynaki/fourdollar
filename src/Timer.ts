@@ -1,8 +1,3 @@
-/**
- * Timer
- */
-
-
 type CallbackPack = {
   id: number
   callback: (...args: any[]) => void
@@ -21,7 +16,7 @@ export class Timer {
   private _alter: boolean = true
 
   /**
-   * 생성자
+   * Timer
    * @param interval interval 시간간격 안에 등록된 callback들이 차례대로 실행된다.
    * @param minTick callback과 callback사이에 최소 시간간격을 설정할 수 있다.
    */
@@ -133,5 +128,3 @@ export class Timer {
     }
   }
 }
-
-export default Timer

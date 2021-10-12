@@ -3,7 +3,7 @@
  */
 
 import test from 'ava'
-import * as $4 from '../src/fourdollar'
+import $4 from '../src'
 
 
 const obj = {

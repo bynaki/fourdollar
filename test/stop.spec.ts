@@ -3,11 +3,9 @@
  */
 
 import test from 'ava'
-import {
+import $4, {
   stop,
-} from '../src/stop'
-import $4 from '../src/fourdollar'
-
+} from '../src'
 
 
 test('stop > stop()', async t => {

@@ -2,13 +2,23 @@
 //
 
 import promisify from './promisify'
-import isInteger from './isInteger'
-import isFloat from './isFloat'
-import toStringQuery from './toStringQuery'
-import Logger from './Logger'
-import FileWriter from './FileWriter'
-import Timer from './Timer'
-import stop from './stop'
+import {
+  isFloat,
+  isInteger,
+} from './numbers'
+import {
+  Logger
+} from './Logger'
+import {
+  FileWriter
+} from './FileWriter'
+import {
+  Timer
+} from './Timer'
+import {
+  stop,
+  toStringQuery,
+} from './utils'
 
 
 export {

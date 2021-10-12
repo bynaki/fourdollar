@@ -3,10 +3,9 @@
  */
 
 import test from 'ava'
-import {
+import $4, {
   toStringQuery,
-} from '../src/fourdollar'
-import * as $4 from '../src/fourdollar'
+} from '../src'
 
 
 test('Url > toStringQuery() > query가 없을때 ""을 반환한다.', t => {

@@ -5,7 +5,7 @@
 import test from 'ava'
 import {
   Timer
-} from '../src/fourdollar'
+} from '../src'
 import { setTimeout } from 'timers';
 
 

@@ -7,7 +7,7 @@ import {
   Logger,
   FileWriter,
   stop,
-} from '../src/fourdollar'
+} from '../src'
 import {
   readFile,
   remove,

@@ -1,8 +1,10 @@
-// promisify
-//
 
 /**
  * Callback 방식을 Promise 로 변환
+ * @param func callback 함수
+ * @param hasErr error가 있다면 true, 아니면 false
+ * @param ctx context 객체
+ * @returns Promise
  */
 export function promisify<T>(
   func: Function, hasErr: any = true, ctx: any = undefined)

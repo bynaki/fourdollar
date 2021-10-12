@@ -3,11 +3,10 @@
  */
 
 import test from 'ava'
-import {
+import $4, {
   isInteger,
   isFloat,
-} from '../src/fourdollar'
-import $4 from '../src/fourdollar'
+} from '../src'
 
 test('Numbers > isInteger() > 정수일때 true을 반환한다.', t => {
   t.true(isInteger('123'))
