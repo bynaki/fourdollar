@@ -56,4 +56,8 @@ export class FileWriter implements IWriter {
   error(msg: string): void {
     this._message('err', msg)
   }
+
+  write(msg: any): void {
+    this._stream.write(`\n${msg}`)
+  }
 }

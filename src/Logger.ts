@@ -4,13 +4,14 @@ import fecha from 'fecha'
 export interface IWriter {
   log: (msg: string) => void
   error: (msg: string) => void
+  write: (msg: any) => void
   link?: IWriter
 }
 
 /**
  * 단순 console 로그
  */
-class DefaultWriter implements IWriter {
+export class DefaultWriter implements IWriter {
   private _other: IWriter
 
   private _message(type: string, msg: string): void {
@@ -23,6 +24,10 @@ class DefaultWriter implements IWriter {
 
   error(msg: string): void {
     this._message('err', msg)
+  }
+
+  write(msg: any): void {
+    console.log(msg)
   }
 
   get link() {

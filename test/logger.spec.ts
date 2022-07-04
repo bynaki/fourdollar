@@ -125,7 +125,7 @@ import {
     let content = await readFile(join(dir, file))
     const reg = /log: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} > World - foobar/
     t.regex(content.toString(), reg)
-    Logger.writer.link = null
+    Logger.writer.link = undefined
   })
 
   test.serial('Logger > StreamLogger#error(): normal stream', async t => {
@@ -135,7 +135,7 @@ import {
     let content = await readFile(join(dir, file))
     const reg = /err: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} > World - foobar/
     t.regex(content.toString(), reg)
-    Logger.writer.link = null
+    Logger.writer.link = undefined
   })
 }
 

@@ -7,18 +7,22 @@ import {
   isInteger,
 } from './numbers'
 import {
-  Logger
+  Logger,
+  DefaultWriter,
 } from './Logger'
 import {
-  FileWriter
+  FileWriter,
 } from './FileWriter'
 import {
-  Timer
+  Timer,
 } from './Timer'
 import {
   stop,
   toStringQuery,
 } from './utils'
+import {
+  logger,
+} from './logger.v2'
 
 
 export {
@@ -27,9 +31,11 @@ export {
   isFloat,
   toStringQuery,
   Logger,
+  DefaultWriter,
   FileWriter,
   Timer,
   stop,
+  logger,
 }
 
 export default {
@@ -41,4 +47,5 @@ export default {
   FileWriter,
   Timer,
   stop,
+  logger,
 }
