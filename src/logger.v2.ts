@@ -23,8 +23,11 @@ export function logger(...args: unknown[]) {
   }
   return (target, property, descriptor) => {
     const method = descriptor.value
-    descriptor.value = function(...args): string {
+    descriptor.value = function(...args): unknown {
       const chunk = method.apply(this, args)
+      if(!chunk) {
+        return chunk
+      }
       let suited: string
       if(typeof(chunk) === 'string') {
         suited = chunk
@@ -50,7 +53,8 @@ export function logger(...args: unknown[]) {
         ww.write(suited)
         ww = ww.link
       }
-      return suited
+      return chunk
     }
+    descriptor.value.writer = w
   }
 }

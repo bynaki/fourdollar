@@ -1,6 +1,6 @@
 {
   "name": "fourdollar",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Private Utility Module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,7 +48,7 @@
   },
   "ava": {
     "files": [
-      "dist.test/test/**/*.spec.js"
+      "dist.test/test/**/logger.v2.spec.js"
     ]
   }
 }

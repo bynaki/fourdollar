@@ -12,6 +12,7 @@ import {
 import {
   join,
 } from 'path'
+import { IWriter } from '../src/Logger'
 
 
 
@@ -25,6 +26,8 @@ import {
 
 
   class TestLog {
+    constructor() {}
+
     @logger()
     log(msg) {
       return msg
@@ -60,60 +63,145 @@ import {
   const tlog = new TestLog()
 
   test('logger v2 > default log', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'Hello World!')
+      return ori(msg)
+    }
     const l = tlog.log('Hello World!')
     t.is(l, 'Hello World!')
+    writer.write = ori
+  })
+
+  test('logger v2 > if msg is null or undefined, do not work', t => {
+    t.plan(1)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.fail()
+    }
+    const l = tlog.log(null)
+    t.is(l, null)
+    writer.write = ori
   })
 
   test('logger v2 > DefaultWriter', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.defaultLog as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'Hello World!')
+      return ori(msg)
+    }
     const l = tlog.defaultLog('Hello World!')
     t.is(l, 'Hello World!')
+    writer.write = ori
   })
 
   test('logger v2 > stream log: normal', async t => {
     const res1 = tlog.streamLog('foobar')
     await stop(500)
     const res2 = await readFile(join(dir, 'normal.log'))
-    t.is('\n' + res1, res2.toString())
+    t.is('foobar', res1)
+    t.is('\nfoobar', res2.toString())
   })
 
   test('logger v2 > stream log: rotating', async t => {
     const res1 = tlog.rotatLog('hello')
     await stop(500)
     const res2 = await readFile(join(dir, 'rotating.log'))
-    t.is('\n' + res1, res2.toString())
+    t.is('hello', res1)
+    t.is('\nhello', res2.toString())
   })
 
   test('logger v2 > overload log', async t => {
     const res1 = tlog.overloadLog('overload')
     await stop(500)
     const res2 = await readFile(join(dir, 'overload.log'))
-    t.is('\n' + res1, res2.toString())
+    t.is('overload', res1)
+    t.is('\noverload', res2.toString())
   })
 
   test('logger v2 > twin writer', async t => {
+    t.plan(3)
+    const writer: DefaultWriter = (tlog.twinLog as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'naki')
+      return ori(msg)
+    }
     const res1 = tlog.twinLog('naki')
     await stop(500)
     const res2 = await readFile(join(dir, 'twin.log'))
-    t.is('\n' + res1, res2.toString())
+    t.is(res1, 'naki')
+    t.is(res2.toString(), '\nnaki')
+    writer.write = ori
   })
 
   test('logger v2 > error log', async t => {
+    t.plan(3)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
     const err = new Error('error!!')
+    writer.write = msg => {
+      t.is(typeof(msg), 'string')
+      t.deepEqual(JSON.parse(msg), {
+        name: err.name,
+        message: err.message,
+        stack: err.stack,
+      })
+      return ori(msg)
+    }
     const res = tlog.log(err)
-    t.deepEqual(JSON.parse(res), {
-      name: err.name,
-      message: err.message,
-      stack: err.stack,
-    })
+    t.is(res, err)
+    writer.write = ori
   })
 
   test('logger v2 > json log', async t => {
+    t.plan(3)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
     const json = {
       name: 'naki',
       sex: 'man',
       age: 10,
     }
+    writer.write = msg => {
+      t.is(typeof(msg), 'string')
+      t.deepEqual(JSON.parse(msg), json)
+      return ori(msg)
+    }
     const res = tlog.log(json)
-    t.deepEqual(json, JSON.parse(res))
+    t.deepEqual(res, json)
+    writer.write = ori
+  })
+
+
+  class ChildLog extends TestLog {
+    constructor() {
+      super()
+    }
+
+    getWriter(): IWriter {
+      return (super.log as any).writer
+    }
+
+    log(msg) {
+      return super.log(msg + ', second msg')
+    }
+  }
+
+  test('logger v2 > inherit', async t => {
+    t.plan(1)
+    const clog = new ChildLog()
+    const writer = clog.getWriter()
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'first msg, second msg')
+    }
+    clog.log('first msg')
+    writer.write = ori
   })
 }
