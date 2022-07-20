@@ -8,13 +8,16 @@ import {
   dirname,
   basename,
 } from 'path'
+import {
+  IWriter,
+} from './Logger'
 
 
-export interface IWriter {
-  log: (msg: string) => void
-  error: (msg: string) => void
-  link?: IWriter
-}
+// export interface IWriter {
+//   log: (msg: string) => void
+//   error: (msg: string) => void
+//   link?: IWriter
+// }
 
 /**
  * Log를 파일로

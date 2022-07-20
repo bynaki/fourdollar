@@ -8,6 +8,7 @@ import {
   FileWriter,
   logger,
   stop,
+  MemoryWriter,
 } from '../src'
 import {
   join,
@@ -23,6 +24,8 @@ import { IWriter } from '../src/Logger'
 
   const twin = new DefaultWriter()
   twin.link = new FileWriter(join(dir, 'twin.log'))
+
+  const memory = new MemoryWriter
 
 
   class TestLog {
@@ -57,7 +60,13 @@ import { IWriter } from '../src/Logger'
     twinLog(msg) {
       return msg
     }
+
+    @logger(memory)
+    memoryLog(msg) {
+      return msg
+    }
   }
+
 
 
   const tlog = new TestLog()
@@ -203,5 +212,28 @@ import { IWriter } from '../src/Logger'
     }
     clog.log('first msg')
     writer.write = ori
+  })
+
+  test.only('logger v2 > memory log', async t => {
+    tlog.memoryLog('hello')
+    tlog.memoryLog(123)
+    tlog.memoryLog(true)
+    tlog.memoryLog([1, 2, 3])
+    tlog.memoryLog({
+      foo: 'bar',
+      num: 123,
+    })
+    tlog.memoryLog('last')
+    for(let i of memory.memory) {
+      console.log(i)
+    }
+    const m = memory.memory
+    t.is(m.length, 6)
+    t.is(m[0], 'hello')
+    t.is(m[1], '123')
+    t.is(m[2], 'true')
+    t.is(m[3], '[\n  1,\n  2,\n  3\n]')
+    t.is(m[4], '{\n  "foo": "bar",\n  "num": 123\n}')
+    t.is(m[5], 'last')
   })
 }
