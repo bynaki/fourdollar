@@ -1,5 +1,10 @@
 import Observable from 'zen-observable'
 import test from 'ava'
+import {
+  DefaultWriter,
+  getLogger,
+  MemoryWriter,
+} from '../src'
 
 
 
@@ -121,11 +126,16 @@ class MyObservable<T> extends BaseObservable<T> {
 
 
 
+const writer = new MemoryWriter(100)
+writer.link = new DefaultWriter()
+const log = getLogger(writer)
 
-test.serial('zen-observable', t => {
+
+
+test.serial.only('zen-observable', t => {
   const subs: ZenObservable.SubscriptionObserver<string>[] = []
   const obs = new Observable<string>(sub => {
-    console.log('initialize!')
+    log('initialize!')
     subs.push(sub)
     setTimeout(() => {
       subs.map(sub => {
@@ -136,7 +146,7 @@ test.serial('zen-observable', t => {
       })
     }, 100)
     return () => {
-      console.log(`returned!: sub.closed = ${sub.closed}`)
+      log(`returned!: sub.closed = ${sub.closed}`)
       t.pass()
     }
   })
@@ -145,10 +155,10 @@ test.serial('zen-observable', t => {
       console.log('start!')
     },
     next(msg) {
-      console.log(msg)
+      log(msg)
     },
     complete() {
-      console.log(`complete!: sub.closed = ${sub.closed}`)
+      log(`complete!: sub.closed = ${sub.closed}`)
     }
   })
   return obs
@@ -186,30 +196,30 @@ test.serial('myobservable', t => {
   return obs
 })
 
-test.serial('zen-observable: unsubscribe', t => {
+test.serial.only('zen-observable: unsubscribe', t => {
   let subs: ZenObservable.SubscriptionObserver<string>[] = []
   const obs = new Observable<string>(sub => {
     console.log('initialize!')
     subs.push(sub)
-    const id = setInterval(() => {
-      subs = subs.map(sub => {
-        sub.next('hello')
-        return sub
-      }).filter(sub => {
-        return !sub.closed
-      })
-      console.log(`subs.length = ${subs.length}`)
-      t.is(subs.length, 1)
-      if(subs.length === 1) {
-        subs[0].complete()
-        clearInterval(id)
-      }
-    }, 1000)
     return () => {
       console.log(`returned!: sub.closed = ${sub.closed}`)
       t.pass()
     }
   })
+  const id = setInterval(() => {
+    subs = subs.map(sub => {
+      sub.next('hello')
+      return sub
+    }).filter(sub => {
+      return !sub.closed
+    })
+    console.log(`subs.length = ${subs.length}`)
+    t.is(subs.length, 1)
+    if(subs.length === 1) {
+      subs[0].complete()
+      clearInterval(id)
+    }
+  }, 1000)
   const sub = obs.subscribe({
     start(sub) {
       console.log('start!')

@@ -9,6 +9,7 @@ import {
   logger,
   stop,
   MemoryWriter,
+  getLogger,
 } from '../src'
 import {
   join,
@@ -81,18 +82,6 @@ import { IWriter } from '../src/Logger'
     }
     const l = tlog.log('Hello World!')
     t.is(l, 'Hello World!')
-    writer.write = ori
-  })
-
-  test('logger v2 > if msg is null or undefined, do not work', t => {
-    t.plan(1)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    writer.write = msg => {
-      t.fail()
-    }
-    const l = tlog.log(null)
-    t.is(l, null)
     writer.write = ori
   })
 
@@ -187,6 +176,55 @@ import { IWriter } from '../src/Logger'
     writer.write = ori
   })
 
+  test('logger v2 > if msg is null', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'null')
+    }
+    const l = tlog.log(null)
+    t.is(l, null)
+    writer.write = ori
+  })
+
+  test('logger v2 > if msg is undefined', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'undefined')
+    }
+    const l = tlog.log(undefined)
+    t.is(l, undefined)
+    writer.write = ori
+  })
+
+  test('logger v2 > number', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, '1234')
+    }
+    const l = tlog.log(1234)
+    t.is(l, 1234)
+    writer.write = ori
+  })
+
+  test('logger v2 > boolean', t => {
+    t.plan(2)
+    const writer: DefaultWriter = (tlog.log as any).writer
+    const ori = writer.write
+    writer.write = msg => {
+      t.is(msg, 'false')
+    }
+    const l = tlog.log(false)
+    t.false(l)
+    writer.write = ori
+  })
+
+
 
   class ChildLog extends TestLog {
     constructor() {
@@ -214,7 +252,7 @@ import { IWriter } from '../src/Logger'
     writer.write = ori
   })
 
-  test.only('logger v2 > memory log', async t => {
+  test('logger v2 > memory log', async t => {
     tlog.memoryLog('hello')
     tlog.memoryLog(123)
     tlog.memoryLog(true)
@@ -237,3 +275,13 @@ import { IWriter } from '../src/Logger'
     t.is(m[5], 'last')
   })
 }
+
+test('logger v2 > getLogger()', t => {
+  t.plan(1)
+  const log = getLogger()
+  const writer: IWriter = log['writer']
+  writer.write = msg => {
+    t.is(msg, 'hello world!')
+  }
+  log('hello world!')
+})

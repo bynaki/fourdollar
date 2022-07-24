@@ -6,6 +6,7 @@ import {
 
 
 export class MemoryWriter implements IWriter {
+  private _other: IWriter
   private old: string[] = []
   private m: string[] = []
 
@@ -62,5 +63,13 @@ export class MemoryWriter implements IWriter {
       return ''
     }
     return this.m[this.m.length - 1]
+  }
+
+  get link() {
+    return this._other
+  }
+
+  set link(other: IWriter) {
+    this._other = other
   }
 }

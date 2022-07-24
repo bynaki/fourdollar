@@ -22,6 +22,7 @@ import {
 } from './utils'
 import {
   logger,
+  getLogger,
 } from './logger.v2'
 import {
   MemoryWriter,
@@ -39,6 +40,7 @@ export {
   Timer,
   stop,
   logger,
+  getLogger,
   MemoryWriter,
 }
 
@@ -52,5 +54,6 @@ export default {
   Timer,
   stop,
   logger,
+  getLogger,
   MemoryWriter,
 }

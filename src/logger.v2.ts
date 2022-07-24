@@ -8,11 +8,7 @@ import {
 
 
 
-
-export function logger()
-export function logger(writer: IWriter)
-export function logger(path: string, interval?: string)
-export function logger(...args: unknown[]) {
+function logHelper(...args: any[]): (msg: any) => void {
   let w: IWriter
   if(args.length === 0) {
     w = new DefaultWriter()
@@ -21,40 +17,72 @@ export function logger(...args: unknown[]) {
   } else {
     w = args[0] as IWriter
   }
-  return (target, property, descriptor) => {
-    const method = descriptor.value
-    descriptor.value = function(...args): unknown {
-      const chunk = method.apply(this, args)
-      if(!chunk) {
-        return chunk
+  const f = (msg: any): void => {
+    let suited: string
+    switch(typeof(msg)) {
+      case 'string': {
+        suited = msg
+        break
       }
-      let suited: string
-      if(typeof(chunk) === 'string') {
-        suited = chunk
-      } else if(chunk instanceof Error) {
-        suited = JSON.stringify({
-          name: chunk.name,
-          message: chunk.message,
-          stack: chunk.stack,
-        }, null, 2)
-      } else {
-        try {
-          suited = JSON.stringify(chunk, null, 2)
-        } catch(err) {
+      case 'number': {
+        suited = msg.toString()
+        break
+      }
+      case 'boolean': {
+        suited = (msg)? 'true' : 'false'
+        break
+      }
+      default: {
+        if(msg === undefined) {
+          suited = 'undefined'
+        } else if(msg === null) {
+          suited = 'null'
+        } else if(msg instanceof Error) {
           suited = JSON.stringify({
-            name: chunk.name,
-            message: chunk.message,
-            stack: chunk.stack,
+            name: msg.name,
+            message: msg.message,
+            stack: msg.stack,
           }, null, 2)
+        } else {
+          try {
+            suited = JSON.stringify(msg, null, 2)
+          } catch(err) {
+            suited = '지원하는 type이 아니다.'
+          }
         }
       }
-      let ww: IWriter | undefined = w
-      while(ww) {
-        ww.write(suited)
-        ww = ww.link
-      }
+    }
+    let ww: IWriter | undefined = w
+    while(ww) {
+      ww.write(suited)
+      ww = ww.link
+    }
+  }
+  f.writer = w
+  return f
+}
+
+
+
+export function logger()
+export function logger(writer: IWriter)
+export function logger(path: string, interval?: string)
+export function logger(...args: any[]) {
+  const helper = logHelper(...args)
+  return (target: any, property: string, descriptor: PropertyDescriptor) => {
+    const method = descriptor.value
+    descriptor.value = (...args) => {
+      const chunk = method.apply(this, args)
+      helper(chunk)
       return chunk
     }
-    descriptor.value.writer = w
+    descriptor.value.writer = helper['writer']
   }
+}
+
+export function getLogger(): (msg: any) => void
+export function getLogger(writer: IWriter): (msg: any) => void
+export function getLogger(path: string, interval?: string): (msg: any) => void
+export function getLogger(...args: any[]): (msg: any) => void {
+  return logHelper(...args)
 }
