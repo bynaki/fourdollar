@@ -7,22 +7,22 @@ import {
 
 export class MemoryWriter implements IWriter {
   private _other: IWriter
-  private old: string[] = []
-  private m: string[] = []
+  private _m: string[] = []
+  private _old: string[] = []
 
   constructor(public limit: number = 1000) {
   }
 
   private _check() {
-    if(this.m.length >= this.limit) {
-      this.old = this.m
-      this.m = []
+    if(this._m.length >= this.limit) {
+      this._old = this._m
+      this._m = []
     }
   }
 
   private _message(type: string, msg: string): void {
     this._check()
-    this.m.push(`${type}: ` + msg)
+    this._m.push(`${type}: ` + msg)
   }
 
   log(msg: string): void {
@@ -37,32 +37,37 @@ export class MemoryWriter implements IWriter {
     this._check()
     switch(typeof(msg)) {
       case 'string': {
-        this.m.push(msg)
+        this._m.push(msg)
         break
       }
       case 'number': {
-        this.m.push(msg.toString())
+        this._m.push(msg.toString())
         break
       }
       case 'boolean': {
-        this.m.push(msg? 'true' : 'false')
+        this._m.push(msg? 'true' : 'false')
         break
       }
       default: {
-        this.m.push(JSON.stringify(msg))
+        this._m.push(JSON.stringify(msg))
       }
     }
   }
 
   get memory(): string[] {
-    return this.old.concat(this.m)
+    return this._old.concat(this._m)
   }
 
   get last(): string {
-    if(this.m.length === 0) {
+    if(this._m.length === 0) {
       return ''
     }
-    return this.m[this.m.length - 1]
+    return this._m[this._m.length - 1]
+  }
+
+  clear(): void {
+    this._m = []
+    this._old = []
   }
 
   get link() {

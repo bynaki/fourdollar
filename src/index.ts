@@ -27,7 +27,14 @@ import {
 import {
   MemoryWriter,
 } from './MemoryWriter'
+import {
+  Observable,
+} from './observable'
+import * as types from './types'
 
+export {
+  types,
+}
 
 export {
   promisify,
@@ -42,6 +49,7 @@ export {
   logger,
   getLogger,
   MemoryWriter,
+  Observable,
 }
 
 export default {
@@ -56,4 +64,5 @@ export default {
   logger,
   getLogger,
   MemoryWriter,
+  Observable,
 }
