@@ -13,12 +13,12 @@ import {
 
 
 abstract class BaseObservable<T> {
-  abstract subscribe(observer: ZenObservable.Observer<T>): ZenObservable.Subscription
+  abstract subscribe(observer: Observer<T>): Subscription
   abstract subscribe(
     onNext: (value: T) => void,
     onError?: (error: any) => void,
     onComplete?: () => void,
-  ): ZenObservable.Subscription
+  ): Subscription
 
   // abstract [Symbol.observable](): Observable<T>
 
