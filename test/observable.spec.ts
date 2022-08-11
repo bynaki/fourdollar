@@ -10,9 +10,7 @@ import {
 } from '../src'
 
 
-
-
-test.serial('zen-observable', t => {
+test('zen-observable', t => {
   t.plan(7)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
@@ -59,8 +57,8 @@ test.serial('zen-observable', t => {
   return obs
 })
 
-test.serial('myobservable', t => {
-  t.plan(7)
+test('myobservable', t => {
+  t.plan(8)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
   const log = getLogger(writer)
@@ -81,13 +79,14 @@ test.serial('myobservable', t => {
       log(`returned!: sub.closed = ${sub.closed}`)
       const m = writer.memory
       if(++count === 2) {
-        t.is(m.length, 6)
+        t.is(m.length, 7)
         t.is(m[0], 'initialize!')
-        t.is(m[1], 'initialize!')
-        t.is(m[2], 'hello')
-        t.is(m[3], 'complete!: sub.closed = true')
-        t.is(m[4], 'returned!: sub.closed = true')
+        t.is(m[1], 'start!')
+        t.is(m[2], 'initialize!')
+        t.is(m[3], 'hello')
+        t.is(m[4], 'complete!: sub.closed = true')
         t.is(m[5], 'returned!: sub.closed = true')
+        t.is(m[6], 'returned!: sub.closed = true')
       }
     }
   })
@@ -105,8 +104,8 @@ test.serial('myobservable', t => {
   return obs
 })
 
-test.serial('zen-observable: unsubscribe', t => {
-  t.plan(8)
+test('zen-observable: unsubscribe', t => {
+  t.plan(7)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
   const log = getLogger(writer)
@@ -137,7 +136,6 @@ test.serial('zen-observable: unsubscribe', t => {
       return !sub.closed
     })
     log(`subs.length = ${subs.length}`)
-    t.is(subs.length, 1)
     if(subs.length === 1) {
       subs[0].complete()
       clearInterval(id)
@@ -158,7 +156,7 @@ test.serial('zen-observable: unsubscribe', t => {
   return obs
 })
 
-test.serial('mybservable: unsubscribe', t => {
+test('mybservable: unsubscribe', t => {
   t.plan(8)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
@@ -172,13 +170,14 @@ test.serial('mybservable: unsubscribe', t => {
       log(`returned!: sub.closed = ${sub.closed}`)
       if(++count === 2) {
         const m = writer.memory
-        t.is(m.length, 6)
+        t.is(m.length, 7)
         t.is(m[0], 'initialize!')
-        t.is(m[1], 'initialize!')
-        t.is(m[2], 'hello')
-        t.is(m[3], 'returned!: sub.closed = true')
-        t.is(m[4], 'subs.length = 1')
-        t.is(m[3], 'returned!: sub.closed = true')
+        t.is(m[1], 'start!')
+        t.is(m[2], 'initialize!')
+        t.is(m[3], 'hello')
+        t.is(m[4], 'returned!: sub.closed = true')
+        t.is(m[5], 'subs.length = 1')
+        t.is(m[6], 'returned!: sub.closed = true')
       }
     }
   })
@@ -190,7 +189,6 @@ test.serial('mybservable: unsubscribe', t => {
       return !sub.closed
     })
     log(`subs.length = ${subs.length}`)
-    t.is(subs.length, 1)
     if(subs.length === 1) {
       subs[0].complete()
       clearInterval(id)
@@ -212,7 +210,7 @@ test.serial('mybservable: unsubscribe', t => {
 })
 
 // promise 안됨
-test.serial('zen-observable: promise', t => {
+test('zen-observable: promise', t => {
   t.plan(10)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
@@ -273,7 +271,7 @@ test.serial('zen-observable: promise', t => {
 })
 
 // promise 됨
-test.serial('myobservable: promise', t => {
+test('myobservable: promise', t => {
   t.plan(15)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
@@ -338,7 +336,7 @@ test.serial('myobservable: promise', t => {
   return obs
 })
 
-test.serial('zen-observable: ', t => {
+test('zen-observable: ', t => {
   t.plan(10)
   const writer = new MemoryWriter(100)
   writer.link = new DefaultWriter()
@@ -396,4 +394,86 @@ test.serial('zen-observable: ', t => {
   }
   callback()
   return obs
+})
+
+
+test('zen-observable: return <Subscription>', t => {
+  t.plan(1)
+  const obs = new Observable<string>(sub => {
+    return {
+      closed: false,
+      unsubscribe() {
+        t.pass()
+      },
+    }
+  })
+  const sub = obs.subscribe({
+    next(value: string) {
+      console.log(`next: ${value}`)
+    },
+  })
+  sub.unsubscribe()
+})
+
+test('myobservable: return <Subscription>', t => {
+  t.plan(1)
+  const obs = new MyObservable<string>(o => {
+    return {
+      closed: false,
+      unsubscribe() {
+        t.pass()
+      },
+    }
+  })
+  const sub = obs.subscribe({
+    next(value: string) {
+      console.log(`next: ${value}`)
+    },
+  })
+  sub.unsubscribe()
+})
+
+test('myobservable: start', t => {
+  t.plan(2)
+  const obs = new MyObservable<string>(o => {
+    return () => {
+      t.pass()
+    }
+  })
+  const sub = obs.subscribe({
+    start(sub: I.Subscription) {
+      t.pass()
+      sub.unsubscribe()
+    }
+  })
+})
+
+test('myobservable: extends', t => {
+  t.plan(3)
+  let so: I.SubscriptionObserver<string>
+  const obs = new MyObservable<string>(o => {
+    so = o
+  })
+  const sub = obs.subscribe({
+    count: 0,
+    value: 'world',
+    start(s: I.Subscription) {
+      this.count = 1
+      t.is(this.value, 'world')
+    },
+    next(value: string) {
+      console.log('next')
+      this.value = value
+      ++this.count
+    },
+    complete() {
+      console.log('complete')
+      t.is(this.value, 'hello')
+      t.is(this.count, 4)
+    },
+  })
+  so!.next('hello')
+  so!.next('hello')
+  so!.next('hello')
+  so!.complete()
 })

@@ -36,7 +36,7 @@ abstract class BaseObservable<T> {
 }
 
 
-
+// todo: start
 export class Observable<T> extends BaseObservable<T> {
   constructor(private readonly subscriber: Subscriber<T>) {
     super()
@@ -49,15 +49,6 @@ export class Observable<T> extends BaseObservable<T> {
     onComplete?: () => void,
   ): Subscription
   subscribe(...args): Subscription {
-    let subObs: SubscriptionObserver<T>
-    let cp: () => void
-    if(args[0].complete) {
-      cp = args[0].complete
-    } else if(args[2]) {
-      cp = args[2]
-    } else {
-      cp = () => {}
-    }
     const makeComplete = (cp: () => void) => {
       return () => {
         if(subObs.closed === false) {
@@ -74,33 +65,43 @@ export class Observable<T> extends BaseObservable<T> {
               break
             }
             default: {
-              // todo
-              // returned
             }
           }
         }
       }
     }
-    if(typeof(args[0]) === 'function') {
-      subObs = {
-        closed: false,
-        next: args[0],
-        error: args[1]? args[1] : (err: any) => {},
-        complete: makeComplete(cp),
-      }
+    let start: (subscription: Subscription) => any
+    let next: (value: T) => Promise<void> | void
+    let error: (err: any) => void
+    let complete: () => void
+    if(typeof(args[0]) === 'object') {
+      start = args[0].start? args[0].start.bind(args[0]) : (sub: Subscription) => {}
+      next = args[0].next? args[0].next.bind(args[0]) : (value: T) => {}
+      error = args[0].error? args[0].error.bind(args[0]) : (err: any) => {}
+      complete = makeComplete(args[0].complete? args[0].complete.bind(args[0]) : () => {})
     } else {
-      subObs = {
-        closed: false,
-        next: args[0].next? args[0].next : (value: T) => {},
-        error: args[0].error? args[0].error : (err: any) => {},
-        complete: makeComplete(cp)
-      }
+      start = (sub: Subscription) => {}
+      next = args[0]
+      error = args[1]? args[1] : (err: any) => {}
+      complete = makeComplete(args[2]? args[2] : () => {})
+    }
+    const subObs: SubscriptionObserver<T> = {
+      closed: false,
+      next,
+      error,
+      complete,
     }
     const returned = this.subscriber(subObs)
-    const sub: Subscription = {
-      closed: false,
-      unsubscribe: makeComplete(() => {}),
+    let sub: Subscription
+    if(typeof(returned) === 'object') {
+      sub = returned
+    } else {
+      sub = {
+        closed: false,
+        unsubscribe: makeComplete(() => {}),
+      }
     }
+    start(sub)
     return sub
   }
 }
