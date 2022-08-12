@@ -3,6 +3,7 @@
  * reference: https://github.com/zenparsing/zen-observable
  */
 
+
 import {
   Observer,
   Subscription,
@@ -36,7 +37,7 @@ abstract class BaseObservable<T> {
 }
 
 
-// todo: start
+
 export class Observable<T> extends BaseObservable<T> {
   constructor(private readonly subscriber: Subscriber<T>) {
     super()
@@ -75,10 +76,10 @@ export class Observable<T> extends BaseObservable<T> {
     let error: (err: any) => void
     let complete: () => void
     if(typeof(args[0]) === 'object') {
-      start = args[0].start? args[0].start.bind(args[0]) : (sub: Subscription) => {}
-      next = args[0].next? args[0].next.bind(args[0]) : (value: T) => {}
-      error = args[0].error? args[0].error.bind(args[0]) : (err: any) => {}
-      complete = makeComplete(args[0].complete? args[0].complete.bind(args[0]) : () => {})
+      start = args[0].start? args[0].start : (sub: Subscription) => {}
+      next = args[0].next? args[0].next : (value: T) => {}
+      error = args[0].error? args[0].error : (err: any) => {}
+      complete = makeComplete(args[0].complete? args[0].complete : () => {})
     } else {
       start = (sub: Subscription) => {}
       next = args[0]

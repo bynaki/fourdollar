@@ -454,24 +454,25 @@ test('myobservable: extends', t => {
   const obs = new MyObservable<string>(o => {
     so = o
   })
-  const sub = obs.subscribe({
+  const sub = {
     count: 0,
     value: 'world',
     start(s: I.Subscription) {
-      this.count = 1
-      t.is(this.value, 'world')
+      sub.count = 1
+      t.is(sub.value, 'world')
     },
     next(value: string) {
       console.log('next')
-      this.value = value
-      ++this.count
+      sub.value = value
+      ++sub.count
     },
     complete() {
       console.log('complete')
-      t.is(this.value, 'hello')
-      t.is(this.count, 4)
+      t.is(sub.value, 'hello')
+      t.is(sub.count, 4)
     },
-  })
+  }
+  obs.subscribe(sub)
   so!.next('hello')
   so!.next('hello')
   so!.next('hello')
