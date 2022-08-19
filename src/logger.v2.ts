@@ -67,16 +67,40 @@ function logHelper(...args: any[]): (msg: any) => void {
 export function logger()
 export function logger(writer: IWriter)
 export function logger(path: string, interval?: string)
+// export function logger(...args: any[]) {
+//   const helper = logHelper(...args)
+//   return (target: any, property: string, descriptor: PropertyDescriptor) => {
+//     const method = descriptor.value
+//     descriptor.value = (...args) => {
+//       const chunk = method.apply(this, args)
+//       helper(chunk)
+//       return chunk
+//     }
+//     descriptor.value.writer = helper['writer']
+//   }
+// }
+
 export function logger(...args: any[]) {
-  const helper = logHelper(...args)
-  return (target: any, property: string, descriptor: PropertyDescriptor) => {
+  let writer: IWriter
+  if(args.length === 0) {
+    writer = new DefaultWriter()
+  } else if(typeof(args[0]) === 'string') {
+    writer = new FileWriter(args[0], args[1])
+  } else {
+    writer = args[0]
+  }
+  return (target: any, property: string, descriptor: TypedPropertyDescriptor<any>) => {
     const method = descriptor.value
     descriptor.value = (...args) => {
-      const chunk = method.apply(this, args)
-      helper(chunk)
+      const chunk = method.apply(target, args)
+      let w = writer
+      while(w) {
+        w.write(chunk)
+        w = w.link
+      }
       return chunk
     }
-    descriptor.value.writer = helper['writer']
+    descriptor.value.writer = writer
   }
 }
 

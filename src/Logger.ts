@@ -39,6 +39,9 @@ export class DefaultWriter implements IWriter {
   }
 }
 
+
+
+
 const myMask = 'YYYY-MM-DD HH:mm:ss.SSS'
 let _writer: IWriter = new DefaultWriter()
 let _format: string = ':time: > :name: - :msg:'

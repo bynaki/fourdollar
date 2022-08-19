@@ -15,6 +15,7 @@ import {
   join,
 } from 'path'
 import { IWriter } from '../src/Logger'
+import fecha from 'fecha'
 
 
 
@@ -53,8 +54,13 @@ import { IWriter } from '../src/Logger'
     }
 
     @logger(join(dir, 'overload.log'))
-    overloadLog(msg) {
-      return msg
+    overloadLog(msg: any) {
+      const myMask = 'YYYY-MM-DD HH:mm:ss.SSS'
+      return {
+        name: this.constructor.name,
+        time: fecha.format(new Date(), myMask),
+        message: msg,
+      }
     }
 
     @logger(twin)
@@ -64,6 +70,11 @@ import { IWriter } from '../src/Logger'
 
     @logger(memory)
     memoryLog(msg) {
+      return msg
+    }
+
+    @logger(join(dir, 'type.log'))
+    typeLog(msg: any) {
       return msg
     }
   }
@@ -99,27 +110,83 @@ import { IWriter } from '../src/Logger'
   })
 
   test('logger v2 > stream log: normal', async t => {
-    const res1 = tlog.streamLog('foobar')
+    const err = new Error('error')
+    const msgList = [
+      'foobar',
+      1234,
+      true,
+      undefined,
+      null,
+      NaN,
+      [1, 2, 3, 4],
+      {
+        foo: 'bar',
+        hello: 'world',
+      },
+      err,
+    ]
+    msgList.forEach(msg => tlog.streamLog(msg))
+    const res1 = `\n${msgList.map(msg => {
+      if(msg === undefined) {
+        return 'undefined'
+      }
+      if(msg instanceof Error) {
+        return JSON.stringify({
+          name: msg.name,
+          message: msg.message,
+          stack: msg.stack,
+        }, null, 2)
+      }
+      return JSON.stringify(msg, null, 2)
+    }).join('\n')}`
+    console.log(res1)
     await stop(500)
     const res2 = await readFile(join(dir, 'normal.log'))
-    t.is('foobar', res1)
-    t.is('\nfoobar', res2.toString())
+    t.is(res2.toString(), res1)
   })
 
   test('logger v2 > stream log: rotating', async t => {
-    const res1 = tlog.rotatLog('hello')
+    const err = new Error('error')
+    const msgList = [
+      'foobar',
+      1234,
+      true,
+      undefined,
+      null,
+      NaN,
+      [1, 2, 3, 4],
+      {
+        foo: 'bar',
+        hello: 'world',
+      },
+      err,
+    ]
+    msgList.forEach(msg => tlog.rotatLog(msg))
+    const res1 = `\n${msgList.map(msg => {
+      if(msg === undefined) {
+        return 'undefined'
+      }
+      if(msg instanceof Error) {
+        return JSON.stringify({
+          name: msg.name,
+          message: msg.message,
+          stack: msg.stack,
+        }, null, 2)
+      }
+      return JSON.stringify(msg, null, 2)
+    }).join('\n')}`
+    console.log(res1)
     await stop(500)
     const res2 = await readFile(join(dir, 'rotating.log'))
-    t.is('hello', res1)
-    t.is('\nhello', res2.toString())
+    t.is(res2.toString(), res1)
   })
 
   test('logger v2 > overload log', async t => {
     const res1 = tlog.overloadLog('overload')
     await stop(500)
     const res2 = await readFile(join(dir, 'overload.log'))
-    t.is('overload', res1)
-    t.is('\noverload', res2.toString())
+    t.deepEqual(Object.keys(res1), ['name', 'time', 'message'])
+    t.is(res2.toString(), `\n${JSON.stringify(res1, null, 2)}`)
   })
 
   test('logger v2 > twin writer', async t => {
@@ -134,96 +201,60 @@ import { IWriter } from '../src/Logger'
     await stop(500)
     const res2 = await readFile(join(dir, 'twin.log'))
     t.is(res1, 'naki')
-    t.is(res2.toString(), '\nnaki')
+    t.is(res2.toString(), '\n"naki"')
     writer.write = ori
   })
 
-  test('logger v2 > error log', async t => {
-    t.plan(3)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
+  test.serial('logger v2 > error log', async t => {
+    memory.clear()
     const err = new Error('error!!')
-    writer.write = msg => {
-      t.is(typeof(msg), 'string')
-      t.deepEqual(JSON.parse(msg), {
+    tlog.memoryLog(err)
+    t.deepEqual(memory.memory[0], {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    })
+  })
+
+  test('logger v2 > varied types log', async t => {
+    const err = new Error('error')
+    const msgList = [
+      'foobar',
+      1234,
+      true,
+      undefined,
+      null,
+      NaN,
+      [1, 2, 3, 4],
+      {
+        foo: 'bar',
+        hello: 'world',
+      },
+      err,
+    ]
+    msgList.forEach(msg => tlog.typeLog(msg))
+    const right = [
+      '"foobar"',
+      '1234',
+      'true',
+      'undefined',
+      'null',
+      'null',
+      JSON.stringify([1, 2, 3, 4], null, 2),
+      JSON.stringify({
+        foo: 'bar',
+        hello: 'world',
+      }, null, 2),
+      JSON.stringify({
         name: err.name,
         message: err.message,
         stack: err.stack,
-      })
-      return ori(msg)
-    }
-    const res = tlog.log(err)
-    t.is(res, err)
-    writer.write = ori
+      }, null, 2)
+    ]
+    await stop(500)
+    const res = (await readFile(join(dir, 'type.log'))).toString()
+    t.is(res, `\n${right.join('\n')}`)
   })
-
-  test('logger v2 > json log', async t => {
-    t.plan(3)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    const json = {
-      name: 'naki',
-      sex: 'man',
-      age: 10,
-    }
-    writer.write = msg => {
-      t.is(typeof(msg), 'string')
-      t.deepEqual(JSON.parse(msg), json)
-      return ori(msg)
-    }
-    const res = tlog.log(json)
-    t.deepEqual(res, json)
-    writer.write = ori
-  })
-
-  test('logger v2 > if msg is null', t => {
-    t.plan(2)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    writer.write = msg => {
-      t.is(msg, 'null')
-    }
-    const l = tlog.log(null)
-    t.is(l, null)
-    writer.write = ori
-  })
-
-  test('logger v2 > if msg is undefined', t => {
-    t.plan(2)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    writer.write = msg => {
-      t.is(msg, 'undefined')
-    }
-    const l = tlog.log(undefined)
-    t.is(l, undefined)
-    writer.write = ori
-  })
-
-  test('logger v2 > number', t => {
-    t.plan(2)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    writer.write = msg => {
-      t.is(msg, '1234')
-    }
-    const l = tlog.log(1234)
-    t.is(l, 1234)
-    writer.write = ori
-  })
-
-  test('logger v2 > boolean', t => {
-    t.plan(2)
-    const writer: DefaultWriter = (tlog.log as any).writer
-    const ori = writer.write
-    writer.write = msg => {
-      t.is(msg, 'false')
-    }
-    const l = tlog.log(false)
-    t.false(l)
-    writer.write = ori
-  })
-
 
 
   class ChildLog extends TestLog {
@@ -252,27 +283,33 @@ import { IWriter } from '../src/Logger'
     writer.write = ori
   })
 
-  test('logger v2 > memory log', async t => {
+  test.serial('logger v2 > memory log', async t => {
+    memory.clear()
     tlog.memoryLog('hello')
     tlog.memoryLog(123)
     tlog.memoryLog(true)
+    tlog.memoryLog(undefined)
+    tlog.memoryLog(null)
+    tlog.memoryLog(NaN)
     tlog.memoryLog([1, 2, 3])
     tlog.memoryLog({
       foo: 'bar',
       num: 123,
     })
     tlog.memoryLog('last')
-    for(let i of memory.memory) {
-      console.log(i)
-    }
     const m = memory.memory
-    t.is(m.length, 6)
-    t.is(m[0], 'hello')
-    t.is(m[1], '123')
-    t.is(m[2], 'true')
-    t.is(m[3], '[\n  1,\n  2,\n  3\n]')
-    t.is(m[4], '{\n  "foo": "bar",\n  "num": 123\n}')
-    t.is(m[5], 'last')
+    t.is(m.length, 9)
+    t.deepEqual(m, [
+      'hello',
+      123,
+      true,
+      undefined,
+      null,
+      NaN,
+      [1, 2, 3],
+      {foo: 'bar', num: 123},
+      'last',
+    ])
   })
 }
 

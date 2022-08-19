@@ -61,6 +61,15 @@ export class FileWriter implements IWriter {
   }
 
   write(msg: any): void {
-    this._stream.write(`\n${msg}`)
+    // this._stream.write(`\n${msg}`)
+    if(msg instanceof Error) {
+      this._stream.write(`\n${JSON.stringify({
+        name: msg.name,
+        message: msg.message,
+        stack: msg.stack,
+      }, null, 2)}`)
+      return
+    }
+    this._stream.write(`\n${JSON.stringify(msg, null, 2)}`)
   }
 }

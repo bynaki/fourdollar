@@ -7,8 +7,8 @@ import {
 
 export class MemoryWriter implements IWriter {
   private _other: IWriter
-  private _m: string[] = []
-  private _old: string[] = []
+  private _m: any[] = []
+  private _old: any[] = []
 
   constructor(public limit: number = 1000) {
   }
@@ -35,26 +35,35 @@ export class MemoryWriter implements IWriter {
 
   write(msg: any): void {
     this._check()
-    switch(typeof(msg)) {
-      case 'string': {
-        this._m.push(msg)
-        break
-      }
-      case 'number': {
-        this._m.push(msg.toString())
-        break
-      }
-      case 'boolean': {
-        this._m.push(msg? 'true' : 'false')
-        break
-      }
-      default: {
-        this._m.push(JSON.stringify(msg))
-      }
+    if(msg instanceof Error) {
+      this._m.push({
+        name: msg.name,
+        message: msg.message,
+        stack: msg.stack,
+      })
+      return
     }
+    this._m.push(msg)
+    // switch(typeof(msg)) {
+    //   case 'string': {
+    //     this._m.push(msg)
+    //     break
+    //   }
+    //   case 'number': {
+    //     this._m.push(msg.toString())
+    //     break
+    //   }
+    //   case 'boolean': {
+    //     this._m.push(msg? 'true' : 'false')
+    //     break
+    //   }
+    //   default: {
+    //     this._m.push(JSON.stringify(msg))
+    //   }
+    // }
   }
 
-  get memory(): string[] {
+  get memory(): any[] {
     return this._old.concat(this._m)
   }
 
