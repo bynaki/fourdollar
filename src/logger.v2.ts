@@ -91,8 +91,8 @@ export function logger(...args: any[]) {
   }
   return (target: any, property: string, descriptor: TypedPropertyDescriptor<any>) => {
     const method = descriptor.value
-    descriptor.value = (...args) => {
-      const chunk = method.apply(target, args)
+    descriptor.value = function(...args) {
+      const chunk = method.apply(this, args)
       let w = writer
       while(w) {
         w.write(chunk)

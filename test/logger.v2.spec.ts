@@ -31,7 +31,11 @@ import fecha from 'fecha'
 
 
   class TestLog {
-    constructor() {}
+    myName: string
+
+    constructor() {
+      this.myName = this.constructor.name
+    }
 
     @logger()
     log(msg) {
@@ -76,6 +80,11 @@ import fecha from 'fecha'
     @logger(join(dir, 'type.log'))
     typeLog(msg: any) {
       return msg
+    }
+
+    @logger(memory)
+    thisLog(msg: string) {
+      return this.myName + `::${msg}`
     }
   }
 
@@ -256,6 +265,11 @@ import fecha from 'fecha'
     t.is(res, `\n${right.join('\n')}`)
   })
 
+  test.serial('logger v2 > this', async t => {
+    memory.clear()
+    tlog.thisLog('hello')
+    t.is(memory.memory[0], 'TestLog::hello')
+  })
 
   class ChildLog extends TestLog {
     constructor() {
@@ -266,21 +280,16 @@ import fecha from 'fecha'
       return (super.log as any).writer
     }
 
-    log(msg) {
-      return super.log(msg + ', second msg')
+    thisLog(msg) {
+      return super.thisLog(`${msg}~~`)
     }
   }
 
-  test('logger v2 > inherit', async t => {
-    t.plan(1)
-    const clog = new ChildLog()
-    const writer = clog.getWriter()
-    const ori = writer.write
-    writer.write = msg => {
-      t.is(msg, 'first msg, second msg')
-    }
-    clog.log('first msg')
-    writer.write = ori
+  test.serial('logger v2 > inherit', async t => {
+    memory.clear()
+    const child = new ChildLog()
+    child.thisLog('world')
+    t.is(memory.memory[0], 'ChildLog::world~~')
   })
 
   test.serial('logger v2 > memory log', async t => {
