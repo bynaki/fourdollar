@@ -23,6 +23,7 @@ import {
  * Log를 파일로
  */
 export class FileWriter implements IWriter {
+  private _other: IWriter
   private _stream: WriteStream|rfs.RotatingFileStream
 
   /**
@@ -71,5 +72,13 @@ export class FileWriter implements IWriter {
       return
     }
     this._stream.write(`\n${JSON.stringify(msg, null, 2)}`)
+  }
+
+  get link() {
+    return this._other
+  }
+
+  set link(other: IWriter) {
+    this._other = other
   }
 }

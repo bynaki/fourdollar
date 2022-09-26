@@ -24,8 +24,12 @@ import fecha from 'fecha'
   const dir = join('./log')
   removeSync(dir)
 
-  const twin = new DefaultWriter()
-  twin.link = new FileWriter(join(dir, 'twin.log'))
+  const tree = new DefaultWriter()
+  const fw = new FileWriter(join(dir, 'tree.log'))
+  const mw = new MemoryWriter()
+  tree.link = fw
+  fw.link = mw
+
 
   const memory = new MemoryWriter
 
@@ -67,8 +71,8 @@ import fecha from 'fecha'
       }
     }
 
-    @logger(twin)
-    twinLog(msg) {
+    @logger(tree)
+    treeLog(msg) {
       return msg
     }
 
@@ -198,19 +202,21 @@ import fecha from 'fecha'
     t.is(res2.toString(), `\n${JSON.stringify(res1, null, 2)}`)
   })
 
-  test('logger v2 > twin writer', async t => {
-    t.plan(3)
-    const writer: DefaultWriter = (tlog.twinLog as any).writer
+  test('logger v2 > tree writer', async t => {
+    t.plan(5)
+    const writer: DefaultWriter = (tlog.treeLog as any).writer
     const ori = writer.write
     writer.write = msg => {
       t.is(msg, 'naki')
       return ori(msg)
     }
-    const res1 = tlog.twinLog('naki')
+    const res1 = tlog.treeLog('naki')
     await stop(500)
-    const res2 = await readFile(join(dir, 'twin.log'))
+    const res2 = await readFile(join(dir, 'tree.log'))
     t.is(res1, 'naki')
     t.is(res2.toString(), '\n"naki"')
+    t.is(mw.memory.length, 1)
+    t.is(mw.memory[0], 'naki')
     writer.write = ori
   })
 
